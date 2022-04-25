@@ -2,9 +2,6 @@
 //  Simulation.cpp
 //  projestSMA
 //
-//  Created by Tine Meersman on 09/02/2022.
-//  Copyright © 2022 Tine Meersman. All rights reserved.
-//
 
 #include "Simulation.hpp"
 
@@ -35,7 +32,7 @@ simulation::simulation(){
     movingAvgUrgentScanWT = new double[W];
     movingAvgOT = new double[W];
 }
-simulation::~simulation(){
+simulation::~simulation(){                                  //vaag waarvoor ~ wordt gebruikt
 }
 
 void simulation::resetSystem(){
@@ -78,7 +75,7 @@ void simulation::setWeekSchedule(){
         }
     }
     
-    // set start and appoitnment time
+    // set start and appointment time
     double time;
     for(d = 0; d < D; d++){
         time = 8; // start time slot schedule
@@ -93,7 +90,11 @@ void simulation::setWeekSchedule(){
                 if(rule == 1){ // FIFO
                     weekSchedule[d][s].appTime = time;
                 }else if(rule == 2){
-                    // TODO: Bailey-Welch rule
+                    weekSchedule[d][s].appTime = time;
+                    if(time==8) {
+                        s++;
+                        weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
+                    }
                 }else if(rule == 3){
                     // TODO: Blocking rule
                 }else if(rule == 4){
