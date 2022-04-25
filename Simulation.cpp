@@ -9,7 +9,7 @@
 simulation::simulation(){
     // Set test case variables
     //TODO: set these variables to the correct values
-    inputFileName = "/Users/tinemeersman/Documents/project SMA 2022 student code /input-S1-14.txt";  // input file with schedule
+    inputFileName = "C:\\Users\\remyg\\CLionProjects\\Simulation-modelling-\\input-S1-14.txt";  // input file with schedule
     W = 10;                      // number of weeks to simulate = run lenght
     R = 1;                      // number of replications
     rule = 1;                   // the appointment scheduling rule to apply
@@ -99,6 +99,10 @@ void simulation::setWeekSchedule(){
                     // TODO: Blocking rule
                 }else if(rule == 4){
                     // TODO: Benchmark rule
+                    if(time=8){
+                        weekSchedule[d][s].appTime = time;
+                    }
+                    weekSchedule[d][s].appTime = time- 0.5* stdevElectiveDuration;
                 }
             }
             
