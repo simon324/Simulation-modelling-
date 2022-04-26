@@ -12,7 +12,7 @@ simulation::simulation(){
     inputFileName = "/Users/rafhoutteman/CLionProjects/Simulation-modelling-/input-S1-14.txt";  // input file with schedule
     W = 10;                      // number of weeks to simulate = run lenght
     R = 1;                      // number of replications
-    rule = 3;                   // the appointment scheduling rule to apply
+    rule = 1;                   // the appointment scheduling rule to apply
     
     // Initialize variables
     avgElectiveAppWT = 0;
