@@ -95,8 +95,17 @@ void simulation::setWeekSchedule(){
                         s++;
                         weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
                     }
-                }else if(rule == 3){
-                    // TODO: Blocking rule
+             }else if(rule == 3){
+                                                            // TODO: Blocking rule
+
+                    if(time%2 == 0){
+                        weekSchedule[d][s].appTime = time;
+                    }
+                    else{
+                        weekSchedule[d][s-1].appTime = time;
+
+                    }
+                   
                 }else if(rule == 4){
                     // TODO: Benchmark rule
                     if(time=8){
