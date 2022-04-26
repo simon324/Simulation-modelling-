@@ -12,7 +12,7 @@ simulation::simulation(){
     inputFileName = "C:\\Users\\remyg\\CLionProjects\\Simulation-modelling-\\input-S1-14.txt";  // input file with schedule
     W = 10;                      // number of weeks to simulate = run lenght
     R = 1;                      // number of replications
-    rule = 3;                   // the appointment scheduling rule to apply
+    rule = 1;                   // the appointment scheduling rule to apply
     
     // Initialize variables
     avgElectiveAppWT = 0;
@@ -95,23 +95,26 @@ void simulation::setWeekSchedule(){
                         s++;
                         weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
                     }
-             }else if(rule == 3) {
-                    // TODO: Blocking rule
+             }else if(rule == 3){
+                                                            // TODO: Blocking rule
 
-                    if (s % 2 == 0) {
+                    if(time%2 == 0){
                         weekSchedule[d][s].appTime = time;
-                    } else {
-                        weekSchedule[d][s - 1].appTime = time;
+                    }
+                    else{
+                        weekSchedule[d][s-1].appTime = time;
 
                     }
-                }
                    
-                else if(rule == 4){
+                }else if(rule == 4){
                     // TODO: Benchmark rule
-                    if(time==8){
+                    if(time=8) {
                         weekSchedule[d][s].appTime = time;
                     }
-                    weekSchedule[d][s].appTime = time- 0.5* stdevElectiveDuration;
+                    else{
+                        weekSchedule[d][s].appTime = time- 0.5* stdevElectiveDuration;
+
+                    }
                 }
             }
             
