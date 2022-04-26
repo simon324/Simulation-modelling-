@@ -12,7 +12,7 @@ simulation::simulation(){
     inputFileName = "C:\\Users\\remyg\\CLionProjects\\Simulation-modelling-\\input-S1-14.txt";  // input file with schedule
     W = 10;                      // number of weeks to simulate = run lenght
     R = 1;                      // number of replications
-    rule = 1;                   // the appointment scheduling rule to apply
+    rule = 3;                   // the appointment scheduling rule to apply
     
     // Initialize variables
     avgElectiveAppWT = 0;
@@ -98,7 +98,7 @@ void simulation::setWeekSchedule(){
              }else if(rule == 3) {
                     // TODO: Blocking rule
 
-                    if (time % 2 == 0) {
+                    if (s % 2 == 0) {
                         weekSchedule[d][s].appTime = time;
                     } else {
                         weekSchedule[d][s - 1].appTime = time;
