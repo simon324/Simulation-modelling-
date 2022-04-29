@@ -11,8 +11,8 @@ simulation::simulation(){
     // Set test case variables
     //TODO: set these variables to the correct values
     inputFileName = "/Users/rafhoutteman/CLionProjects/Simulation-modelling-/input-S1-14.txt";  // input file with schedule
-    W = 10;                      // number of weeks to simulate = run lenght
-    R = 1;                      // number of replications
+    W = 1000;                      // number of weeks to simulate = run lenght
+    R = 100;                      // number of replications
     rule = 1;                   // the appointment scheduling rule to apply
     
     // Initialize variables
@@ -97,7 +97,7 @@ void simulation::setWeekSchedule(){
                         weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
                     }
              }else if(rule == 3){
-                                                            // TODO: Blocking rule
+                                                            // Blocking rule
 
                     if(s%2 == 0){
                         weekSchedule[d][s].appTime = time;
@@ -108,7 +108,7 @@ void simulation::setWeekSchedule(){
                     }
                    
                 }else if(rule == 4){
-                    // TODO: Benchmark rule
+                    // Benchmark rule
                     if(time==8) {
                         weekSchedule[d][s].appTime = time;
                     }
@@ -478,10 +478,11 @@ void simulation::runOneSimulation(){
     
     
     //print moving avg
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output-movingAvg.txt", "a"); //
+    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output-movingAvg3.txt", "a"); //
     fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
     for(w = 0; w < W; w++){
         fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
+
     }
     fclose(file);
     
@@ -518,10 +519,14 @@ void simulation::runSimulations(){
 
 
     //print results
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output.txt", "a");
+    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output3.txt", "a");
     fprintf(file,"r \t elAppWT \t elScanWT \t urScanWT \t OT \t OV \n");
-    fprintf(file,"%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
     fprintf(file,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
+    for(r = 0; r < R; r++){
+        fprintf(file,"%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+
+    }
+
     fclose(file);
 
 
