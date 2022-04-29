@@ -3,6 +3,7 @@
 //  projestSMA
 //
 
+#include <iostream>
 #include "Simulation.hpp"
 
 // Initialization of a "simulation" object
@@ -476,13 +477,13 @@ void simulation::runOneSimulation(){
     avgOT = avgOT / (D * W);
     
     
-    // print moving avg
-    /*FILE *file = fopen("/Users/tinemeersman/Documents/project SMA 2022 student code /output-movingAvg.txt", "a"); // TODO: use your own directory
+    //print moving avg
+    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output-movingAvg.txt", "a"); //
     fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
     for(w = 0; w < W; w++){
         fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
     }
-    fclose(file);*/
+    fclose(file);
     
 }
 
@@ -513,9 +514,17 @@ void simulation::runSimulations(){
     OV = OV / R;
     double objectiveValue = electiveAppWT / weightEl + urgentScanWT / weightUr;
     printf("Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
-    
-    // print results
-    //FILE *file = fopen("/Users/tinemeersman/Documents/project SMA 2022 student code /output.txt", "a"); // TODO: use your own directory
-    // TODO: print the output you need to a .txt file
-    //fclose(file);
+
+
+
+    //print results
+    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output.txt", "a");
+    fprintf(file,"r \t elAppWT \t elScanWT \t urScanWT \t OT \t OV \n");
+    fprintf(file,"%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+    fprintf(file,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
+    fclose(file);
+
+
+
+
 }
