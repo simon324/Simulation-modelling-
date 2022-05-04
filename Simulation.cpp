@@ -3,16 +3,15 @@
 //  projestSMA
 //
 
-#include <iostream>
 #include "Simulation.hpp"
-
+#include <iostream>
 // Initialization of a "simulation" object
 simulation::simulation(){
     // Set test case variables
     //TODO: set these variables to the correct values
-    inputFileName = "/Users/rafhoutteman/CLionProjects/Simulation-modelling-/input-S1-14.txt";  // input file with schedule
-    W = 1350;                      // number of weeks to simulate = run lenght
-    R = 100;                      // number of replications
+    inputFileName = "C:\\Users\\remyg\\CLionProjects\\Simulation-modelling_good_version\\input-S1-14.txt";  // input file with schedule
+    W = 1000;                      // number of weeks to simulate = run lenght
+    R = 1;                      // number of replications
     rule = 1;                   // the appointment scheduling rule to apply
     
     // Initialize variables
@@ -97,7 +96,7 @@ void simulation::setWeekSchedule(){
                         weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
                     }
              }else if(rule == 3){
-                                                            // Blocking rule
+                                                            // TODO: Blocking rule
 
                     if(s%2 == 0){
                         weekSchedule[d][s].appTime = time;
@@ -108,7 +107,7 @@ void simulation::setWeekSchedule(){
                     }
                    
                 }else if(rule == 4){
-                    // Benchmark rule
+                    // TODO: Benchmark rule
                     if(time==8) {
                         weekSchedule[d][s].appTime = time;
                     }
@@ -475,14 +474,13 @@ void simulation::runOneSimulation(){
     avgElectiveScanWT = avgElectiveScanWT / numberOfPatients[0];
     avgUrgentScanWT = avgUrgentScanWT / numberOfPatients[1];
     avgOT = avgOT / (D * W);
-    
-    
-    //print moving avg
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output-movingAvg1.txt", "a"); //
-    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
-    for(w = 0; w < W; w++){
-        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
 
+    
+    // print moving avg
+    FILE * file = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\output-movingAvg_rule1_14urgentslots.txt", "a"); // TODO: use your own directory
+    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
+    for(w = 350; w < W; w++){
+        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
     }
     fclose(file);
     
@@ -507,6 +505,9 @@ void simulation::runSimulations(){
         OT += avgOT;
         OV += avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr;
         printf("%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+        FILE *file2 = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\_rule1_14urgentslotsMOVAVE100rep.txt", "a");
+        fprintf(file2,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+        fclose(file2);
     }
     electiveAppWT = electiveAppWT / R;
     electiveScanWT = electiveScanWT / R;
@@ -515,13 +516,11 @@ void simulation::runSimulations(){
     OV = OV / R;
     double objectiveValue = electiveAppWT / weightEl + urgentScanWT / weightUr;
     printf("Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
-
-
-
-    //print results
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output1.txt", "a");
+    
+    // print results
+    FILE *file = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\_rule1_14urgentslots.txt", "a"); // TODO: use your own directory
     fprintf(file,"r \t elAppWT \t elScanWT \t urScanWT \t OT \t OV \n");
+    fprintf(file,"%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
     fprintf(file,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
     fclose(file);
-
 }
