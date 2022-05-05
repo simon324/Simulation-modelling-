@@ -392,7 +392,7 @@ void simulation::runOneSimulation(){
     int prevWeek = 0; int prevDay = -1;
     int numberOfPatientsWeek[2] = {0,0};
     int numberOfPatients[2] = {0,0};
-    double arrivalTime, wt;
+    double arrivalTime, wt, tardiness;
     double prevScanEndTime = 0;
     bool prevIsNoShow = false;
     // go over arrival events (i.e. the moment the patient arrives at the hospital)
@@ -414,10 +414,14 @@ void simulation::runOneSimulation(){
                 }
             }
             wt = patient->getScanWT();
+            tardiness = patient -> tardiness;
             if(patient->patientType == 1){
                 movingAvgElectiveScanWT[patient->scanWeek] += wt;
+                movingAvgElectiveTardiness[patient->scanWeek] += tardiness;
+
             }else{
                 movingAvgUrgentScanWT[patient->scanWeek] += wt;
+                movingAvgUrgentTardiness[patient -> scanWeek] += tardiness;
             }
             numberOfPatientsWeek[patient->patientType - 1]++;
             if(patient->patientType == 1){
@@ -446,6 +450,8 @@ void simulation::runOneSimulation(){
         if(prevWeek != patient->scanWeek){
             movingAvgElectiveScanWT[prevWeek] = movingAvgElectiveScanWT[prevWeek] / numberOfPatientsWeek[0];
             movingAvgUrgentScanWT[prevWeek] = movingAvgUrgentScanWT[prevWeek] / numberOfPatientsWeek[1];
+            movingAvgElectiveTardiness[prevWeek] = movingAvgElectiveTardiness[prevWeek]/numberOfPatientsWeek[0];
+            movingAvgElectiveTardiness[prevWeek] = movingAvgUrgentTardiness[prevWeek]/numberOfPatientsWeek[1];
             movingAvgOT[prevWeek] = movingAvgOT[prevWeek] / D;
             numberOfPatientsWeek[0] = 0;
             numberOfPatientsWeek[1] = 0;
@@ -468,7 +474,12 @@ void simulation::runOneSimulation(){
     // update moving averages of the last week
     movingAvgElectiveScanWT[W-1] = movingAvgElectiveScanWT[W-1] / numberOfPatientsWeek[0];
     movingAvgUrgentScanWT[W-1] = movingAvgUrgentScanWT[W-1] / numberOfPatientsWeek[1];
+    movingAvgElectiveTardiness[W-1] = movingAvgElectiveTardiness[W-1] / numberOfPatientsWeek[0];
+    movingAvgUrgentTardiness[W-1] = movingAvgUrgentTardiness[W-1] / numberOfPatientsWeek[1];
     movingAvgOT[W-1] = movingAvgOT[W-1] / D;
+
+
+
     
     // calculate objective values
     avgElectiveScanWT = avgElectiveScanWT / numberOfPatients[0];
@@ -477,10 +488,10 @@ void simulation::runOneSimulation(){
 
     
     // print moving avg
-    FILE * file = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\output-movingAvg_rule1_14urgentslots.txt", "a"); // TODO: use your own directory
-    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
-    for(w = 350; w < W; w++){
-        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
+    FILE * file = fopen("C:/Users/simon/CLionProjects/Simulation-modelling-/moving_average__S14.txt", "a"); // TODO: use your own directory
+    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \t elTardiness \t urTardiness  \n");
+    for(w = 0; w < W; w++){
+        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w],movingAvgElectiveTardiness[w], movingAvgUrgentTardiness[w]);
     }
     fclose(file);
     
