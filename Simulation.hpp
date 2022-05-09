@@ -123,6 +123,8 @@ public:
     double *movingAvgElectiveScanWT;   // moving average elective scan waiting time
     double *movingAvgUrgentScanWT;     // moving average urgent scan waiting time
     double *movingAvgOT;               // moving average overtime
+    double *movingAvgElectiveTardiness;// moving average tardiness elective patients
+    double *movingAvgUrgentTardiness;  // moving average tardiness urgent patients
     double avgElectiveAppWT;           // average elective appointment waiting time
     double avgElectiveScanWT;          // average elective scan waiting time
     double avgUrgentScanWT;            // average urgent scan waiting time

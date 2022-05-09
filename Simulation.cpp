@@ -3,16 +3,15 @@
 //  projestSMA
 //
 
-#include <iostream>
 #include "Simulation.hpp"
-
+#include <iostream>
 // Initialization of a "simulation" object
 simulation::simulation(){
     // Set test case variables
     //TODO: set these variables to the correct values
-    inputFileName = "/Users/rafhoutteman/CLionProjects/Simulation-modelling-/input-S1-14.txt";  // input file with schedule
-    W = 1350;                      // number of weeks to simulate = run lenght
-    R = 100;                      // number of replications
+    inputFileName = "C:\\Users\\remyg\\CLionProjects\\Simulation-modelling_good_version\\input-S1-14.txt";  // input file with schedule
+    W = 1000;                      // number of weeks to simulate = run lenght
+    R = 1;                      // number of replications
     rule = 1;                   // the appointment scheduling rule to apply
     
     // Initialize variables
@@ -97,7 +96,7 @@ void simulation::setWeekSchedule(){
                         weekSchedule[d][s].appTime = time;   // Bailey-Welch rule
                     }
              }else if(rule == 3){
-                                                            // Blocking rule
+                                                            // TODO: Blocking rule
 
                     if(s%2 == 0){
                         weekSchedule[d][s].appTime = time;
@@ -108,7 +107,7 @@ void simulation::setWeekSchedule(){
                     }
                    
                 }else if(rule == 4){
-                    // Benchmark rule
+                    // TODO: Benchmark rule
                     if(time==8) {
                         weekSchedule[d][s].appTime = time;
                     }
@@ -393,7 +392,7 @@ void simulation::runOneSimulation(){
     int prevWeek = 0; int prevDay = -1;
     int numberOfPatientsWeek[2] = {0,0};
     int numberOfPatients[2] = {0,0};
-    double arrivalTime, wt;
+    double arrivalTime, wt, tardiness;
     double prevScanEndTime = 0;
     bool prevIsNoShow = false;
     // go over arrival events (i.e. the moment the patient arrives at the hospital)
@@ -415,10 +414,14 @@ void simulation::runOneSimulation(){
                 }
             }
             wt = patient->getScanWT();
+            tardiness = patient -> tardiness;
             if(patient->patientType == 1){
                 movingAvgElectiveScanWT[patient->scanWeek] += wt;
+                movingAvgElectiveTardiness[patient->scanWeek] += tardiness;
+
             }else{
                 movingAvgUrgentScanWT[patient->scanWeek] += wt;
+                movingAvgUrgentTardiness[patient -> scanWeek] += tardiness;
             }
             numberOfPatientsWeek[patient->patientType - 1]++;
             if(patient->patientType == 1){
@@ -447,6 +450,8 @@ void simulation::runOneSimulation(){
         if(prevWeek != patient->scanWeek){
             movingAvgElectiveScanWT[prevWeek] = movingAvgElectiveScanWT[prevWeek] / numberOfPatientsWeek[0];
             movingAvgUrgentScanWT[prevWeek] = movingAvgUrgentScanWT[prevWeek] / numberOfPatientsWeek[1];
+            movingAvgElectiveTardiness[prevWeek] = movingAvgElectiveTardiness[prevWeek]/numberOfPatientsWeek[0];
+            movingAvgElectiveTardiness[prevWeek] = movingAvgUrgentTardiness[prevWeek]/numberOfPatientsWeek[1];
             movingAvgOT[prevWeek] = movingAvgOT[prevWeek] / D;
             numberOfPatientsWeek[0] = 0;
             numberOfPatientsWeek[1] = 0;
@@ -469,20 +474,24 @@ void simulation::runOneSimulation(){
     // update moving averages of the last week
     movingAvgElectiveScanWT[W-1] = movingAvgElectiveScanWT[W-1] / numberOfPatientsWeek[0];
     movingAvgUrgentScanWT[W-1] = movingAvgUrgentScanWT[W-1] / numberOfPatientsWeek[1];
+    movingAvgElectiveTardiness[W-1] = movingAvgElectiveTardiness[W-1] / numberOfPatientsWeek[0];
+    movingAvgUrgentTardiness[W-1] = movingAvgUrgentTardiness[W-1] / numberOfPatientsWeek[1];
     movingAvgOT[W-1] = movingAvgOT[W-1] / D;
+
+
+
     
     // calculate objective values
     avgElectiveScanWT = avgElectiveScanWT / numberOfPatients[0];
     avgUrgentScanWT = avgUrgentScanWT / numberOfPatients[1];
     avgOT = avgOT / (D * W);
-    
-    
-    //print moving avg
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output-movingAvg1.txt", "a"); //
-    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \n");
-    for(w = 0; w < W; w++){
-        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w]);
 
+    
+    // print moving avg
+    FILE * file = fopen("C:/Users/simon/CLionProjects/Simulation-modelling-/moving_average__S14.txt", "a"); // TODO: use your own directory
+    fprintf(file,"week \t elAppWT \t elScanWT \t urScanWT \t OT \t elTardiness \t urTardiness  \n");
+    for(w = 0; w < W; w++){
+        fprintf(file, "%d \t %.2f \t %.2f \t %.2f \t %.2f \n", w, movingAvgElectiveAppWT[w], movingAvgElectiveScanWT[w], movingAvgUrgentScanWT[w], movingAvgOT[w],movingAvgElectiveTardiness[w], movingAvgUrgentTardiness[w]);
     }
     fclose(file);
     
@@ -507,6 +516,9 @@ void simulation::runSimulations(){
         OT += avgOT;
         OV += avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr;
         printf("%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+        FILE *file2 = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\_rule1_14urgentslotsMOVAVE100rep.txt", "a");
+        fprintf(file2,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
+        fclose(file2);
     }
     electiveAppWT = electiveAppWT / R;
     electiveScanWT = electiveScanWT / R;
@@ -515,13 +527,11 @@ void simulation::runSimulations(){
     OV = OV / R;
     double objectiveValue = electiveAppWT / weightEl + urgentScanWT / weightUr;
     printf("Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
-
-
-
-    //print results
-    FILE *file = fopen("/Users/rafhoutteman/CLionProjects/output1.txt", "a");
+    
+    // print results
+    FILE *file = fopen("C:\\Users\\remyg\\Documents\\schoolwerk unief 1ste master\\Simulation modelling\\project assignment\\_rule1_14urgentslots.txt", "a"); // TODO: use your own directory
     fprintf(file,"r \t elAppWT \t elScanWT \t urScanWT \t OT \t OV \n");
+    fprintf(file,"%d \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", r, avgElectiveAppWT, avgElectiveScanWT, avgUrgentScanWT, avgOT, avgElectiveAppWT / weightEl + avgUrgentScanWT / weightUr);
     fprintf(file,"Avg.: \t %.2f \t %.2f \t %.2f \t %.2f \t %.2f \n", electiveAppWT, electiveScanWT, urgentScanWT, OT, objectiveValue);
     fclose(file);
-
 }
